@@ -5,14 +5,18 @@ import express from 'express';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+type Context = {
+  url?: string;
+};
+
+const assets = require(process.env.RAZZLE_ASSETS_MANIFEST || '');
 
 const server = express();
 server
   .disable('x-powered-by')
-  .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
+  .use(express.static(process.env.RAZZLE_PUBLIC_DIR || ''))
   .get('/*', (req, res) => {
-    const context = {};
+    const context: Context = {};
     const sheet = new ServerStyleSheet();
     let markup;
     let styleTags;
@@ -27,8 +31,6 @@ server
       );
 
       styleTags = sheet.getStyleTags();
-
-      console.log('>>>>>>', styleTags);
     } catch (error) {
       console.error('SSR error', error);
     } finally {
@@ -56,9 +58,9 @@ server
             ? `<script src="${assets.client.js}" defer></script>`
             : `<script src="${assets.client.js}" defer crossorigin></script>`
         }
+        ${styleTags}
     </head>
     <body>
-        ${styleTags}
         <div id="root">${markup}</div>
     </body>
 </html>`

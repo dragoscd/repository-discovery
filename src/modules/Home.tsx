@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Card from '../components/Card';
 
 const StyledHomeWrapper = styled.div`
   background-color: red;
@@ -7,7 +8,12 @@ const StyledHomeWrapper = styled.div`
 
 class Home extends React.Component {
   render() {
-    return <StyledHomeWrapper>The beginning</StyledHomeWrapper>;
+    return (
+      <StyledHomeWrapper>
+        The beginning
+        <Card />
+      </StyledHomeWrapper>
+    );
   }
 }
 

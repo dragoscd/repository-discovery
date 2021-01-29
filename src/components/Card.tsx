@@ -1,11 +1,7 @@
 import React from 'react';
 
-interface CardProps {
-    name: string;
-} 
-
-const Card: React.FC<CardProps> = () => {
-    return <div>Test</div>;
+const Card: React.FC = () => {
+    return <div>Card</div>;
 }
  
 export default Card;
