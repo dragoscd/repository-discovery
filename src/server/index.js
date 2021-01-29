@@ -1,8 +1,9 @@
-import App from './App';
+import App from '../App';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import express from 'express';
 import { renderToString } from 'react-dom/server';
+import { ServerStyleSheet } from 'styled-components';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -12,11 +13,27 @@ server
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .get('/*', (req, res) => {
     const context = {};
-    const markup = renderToString(
-      <StaticRouter context={context} location={req.url}>
-        <App />
-      </StaticRouter>
-    );
+    const sheet = new ServerStyleSheet();
+    let markup;
+    let styleTags;
+
+    try {
+      markup = renderToString(
+        sheet.collectStyles(
+          <StaticRouter context={context} location={req.url}>
+            <App />
+          </StaticRouter>
+        )
+      );
+
+      styleTags = sheet.getStyleTags();
+
+      console.log('>>>>>>', styleTags);
+    } catch (error) {
+      console.error('SSR error', error);
+    } finally {
+      sheet.seal();
+    }
 
     if (context.url) {
       res.redirect(context.url);
@@ -41,6 +58,7 @@ server
         }
     </head>
     <body>
+        ${styleTags}
         <div id="root">${markup}</div>
     </body>
 </html>`
