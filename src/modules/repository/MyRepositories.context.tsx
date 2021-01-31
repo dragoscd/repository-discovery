@@ -42,7 +42,10 @@ const MyRepositoryProvider: React.FC = ({ children }) => {
       repositories.forEach(
         repository =>
           (newRepositories[repository.id] = {
-            repository,
+            repository: {
+              ...repository,
+              stargazers_count: repository.stargazers_count + 1,
+            },
             lastUpdated: Date.now(),
           })
       );
@@ -72,7 +75,10 @@ const MyRepositoryProvider: React.FC = ({ children }) => {
       repositories.forEach(repository => {
         if (newRepositories[repository.id]) {
           newRepositories[repository.id] = {
-            repository,
+            repository: {
+              ...repository,
+              stargazers_count: repository.stargazers_count + 1,
+            },
             lastUpdated: Date.now(),
           };
         }

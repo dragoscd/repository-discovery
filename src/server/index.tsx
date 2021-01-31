@@ -4,6 +4,7 @@ import { StaticRouter } from 'react-router-dom';
 import express from 'express';
 import { renderToString } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
+import { Provider } from 'use-http';
 
 type Context = {
   url?: string;
@@ -21,12 +22,20 @@ server
     let markup;
     let styleTags;
 
+    const fetchOptions = {
+      headers: {
+        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+      },
+    };
+
     try {
       markup = renderToString(
         sheet.collectStyles(
-          <StaticRouter context={context} location={req.url}>
-            <App />
-          </StaticRouter>
+          <Provider url={process.env.API_URL} options={fetchOptions}>
+            <StaticRouter context={context} location={req.url}>
+              <App />
+            </StaticRouter>
+          </Provider>
         )
       );
 
@@ -62,6 +71,11 @@ server
     </head>
     <body>
         <div id="root">${markup}</div>
+
+        <script type="text/javascript" id="env">
+          window.__API_URL__ = "${process.env.API_URL}";
+          window.__GITHUB_TOKEN__ = "${process.env.GITHUB_TOKEN}";
+        </script>
     </body>
 </html>`
       );
