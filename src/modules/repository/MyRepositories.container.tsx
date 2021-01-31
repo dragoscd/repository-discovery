@@ -1,5 +1,7 @@
 import React from 'react';
 
 const MyRepositoriesContainer: React.FC = () => {
-  return null;
+  return <div>My repositories</div>;
 };
+
+export default MyRepositoriesContainer;

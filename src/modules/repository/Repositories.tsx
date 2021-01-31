@@ -1,25 +1,46 @@
 import React from 'react';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import Card from '../../components/Card';
 import { Center } from '../../components/styled/Center';
+import { Tab, Tabs } from '../../components/Tabs';
+import MyRepositoriesContainer from './MyRepositories.container';
 import NewRepositoriesContainer from './NewRepositories.container';
 
-const StyledRepositoriesWrapper = styled(Center)`
+const RepositoriesWrapper = styled(Center)`
   max-width: 450px;
   padding: 24px;
   width: 100%;
 `;
 
-class Home extends React.Component {
-  render() {
-    return (
-      <StyledRepositoriesWrapper>
-        <h1>Repositories</h1>
-        <div>Tabs</div>
-        <NewRepositoriesContainer />
-      </StyledRepositoriesWrapper>
-    );
-  }
-}
+const RepositoriesHeader = styled.h1`
+  margin-bottom: 32px;
+`;
 
-export default Home;
+const StyledTabs = styled(Tabs)`
+  margin-bottom: 24px;
+`;
+
+const Repositories: React.FC<RouteComponentProps> = ({ match, history }) => {
+  return (
+    <RepositoriesWrapper>
+      <RepositoriesHeader>Repositories</RepositoriesHeader>
+      <StyledTabs
+        selectedTab={
+          history.location.pathname.includes('starred') ? 'starred' : 'new'
+        }
+        onSelect={tabId => history.push(`/${tabId}`)}
+      >
+        <Tab tabId="new">New</Tab>
+        <Tab tabId="starred">Starred</Tab>
+      </StyledTabs>
+      <Switch>
+        <Redirect exact from={match.url} to="/new" />
+        <Route path={`/new`} component={NewRepositoriesContainer}></Route>
+        <Route path={`/starred`} component={MyRepositoriesContainer}></Route>
+      </Switch>
+      {/* <NewRepositoriesContainer /> */}
+    </RepositoriesWrapper>
+  );
+};
+
+export default Repositories;

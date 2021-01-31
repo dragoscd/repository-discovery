@@ -7,7 +7,7 @@ const App = () => (
   <>
     <GlobalStyles />
     <Switch>
-      <Route exact path="/" component={Repositories} />
+      <Route path="/" component={Repositories} />
     </Switch>
   </>
 );
