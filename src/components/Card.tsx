@@ -1,3 +1,4 @@
+import format from 'date-fns/format';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { IRepository } from '../types/common';
@@ -37,11 +38,13 @@ const InfoColumn = styled.div`
 
 const ActionsColumn = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  align-items: center;
   flex-shrink: 0;
   flex-grow: 0;
   width: 70px;
   margin-left: 12px;
+  flex-direction: column;
 `;
 
 const GithubLink = styled.a`
@@ -94,6 +97,11 @@ const ButtonStars = styled.button<{ starred?: boolean }>`
   }
 `;
 
+const DateWrapper = styled.div`
+  font-size: 12px;
+  padding-top: 4px;
+`;
+
 export type CardProps = {
   data: IRepository;
   className?: string;
@@ -112,6 +120,7 @@ const Card: React.FC<CardProps> = ({
     html_url,
     description = 'No description available',
     stargazers_count = 0,
+    created_at,
   } = data || {};
 
   return (
@@ -132,6 +141,7 @@ const Card: React.FC<CardProps> = ({
           <StyledStarIcon fillColor={isStarred ? '#d2aa09' : '#666'} />
           {stargazers_count}
         </ButtonStars>
+        <DateWrapper>{format(new Date(created_at), 'dd.MM')}</DateWrapper>
       </ActionsColumn>
     </CardWrapper>
   );

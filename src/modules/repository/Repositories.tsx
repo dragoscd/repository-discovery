@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Center } from '../../components/styled/Center';
 import { Tab, Tabs } from '../../components/Tabs';
 import MyRepositoriesContainer from './MyRepositories.container';
+import { MyRepositoryProvider } from './MyRepositories.context';
 import NewRepositoriesContainer from './NewRepositories.container';
 
 const RepositoriesWrapper = styled(Center)`
@@ -33,12 +34,13 @@ const Repositories: React.FC<RouteComponentProps> = ({ match, history }) => {
         <Tab tabId="new">New</Tab>
         <Tab tabId="starred">Starred</Tab>
       </StyledTabs>
-      <Switch>
-        <Redirect exact from={match.url} to="/new" />
-        <Route path={`/new`} component={NewRepositoriesContainer}></Route>
-        <Route path={`/starred`} component={MyRepositoriesContainer}></Route>
-      </Switch>
-      {/* <NewRepositoriesContainer /> */}
+      <MyRepositoryProvider>
+        <Switch>
+          <Redirect exact from={match.url} to="/new" />
+          <Route path={`/new`} component={NewRepositoriesContainer}></Route>
+          <Route path={`/starred`} component={MyRepositoriesContainer}></Route>
+        </Switch>
+      </MyRepositoryProvider>
     </RepositoriesWrapper>
   );
 };

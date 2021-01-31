@@ -19,6 +19,7 @@ interface CardListProps {
   data?: IRepository[];
   loading?: boolean;
   error?: boolean;
+  isCardStarred?: (repositoryID: number) => boolean;
 }
 
 const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
@@ -26,6 +27,7 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
   loading = false,
   error = false,
   onStared,
+  isCardStarred,
 }) => {
   if (!data && loading) {
     return <NotificationMessage>Loading ...</NotificationMessage>;
@@ -39,13 +41,20 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
     );
   }
 
+  if (data && data.length === 0) {
+    return <NotificationMessage>No data available</NotificationMessage>;
+  }
+
   return (
     <div>
       {(data || []).map(repository => {
+        const cardStarred = isCardStarred && isCardStarred(repository.id);
+
         return (
           <StyledCard
             key={repository.id}
             data={repository}
+            isStarred={cardStarred}
             onStared={() => onStared && onStared(repository)}
           />
         );

@@ -1,20 +1,28 @@
+import format from 'date-fns/format';
+import subDays from 'date-fns/subDays';
 import React, { useEffect, useState } from 'react';
 import { fetchRepositories } from '../../api';
 import CardList from '../../components/CardList';
 import { IRepository } from '../../types/common';
-
-import { repositoryMock } from './fixtures';
+import { useMyRepositories } from './MyRepositories.context';
 
 const NewRepositoriesContainer: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [repositories, setRepositories] = useState<IRepository[] | undefined>();
   const [error, setError] = useState<boolean>();
+  const {
+    starredRepositories,
+    removeRepository,
+    upsertRepository,
+  } = useMyRepositories();
 
   useEffect(() => {
     setError(false);
     setLoading(true);
 
-    fetchRepositories({ createdFrom: '2019-01-10' })
+    const lastWeekDate = format(subDays(new Date(), 7), 'yyyy-MM-dd');
+
+    fetchRepositories({ createdFrom: lastWeekDate })
       .then(({ items }) => {
         if (Array.isArray(items)) {
           const repositoriesData = items.map(
@@ -49,7 +57,21 @@ const NewRepositoriesContainer: React.FC = () => {
       });
   }, []);
 
-  return <CardList data={repositories} loading={loading} error={error} />;
+  return (
+    <CardList
+      data={repositories}
+      loading={loading}
+      error={error}
+      isCardStarred={repositoryID => !!starredRepositories[repositoryID]}
+      onStared={repository => {
+        if (starredRepositories[repository.id]) {
+          removeRepository([repository.id]);
+        } else {
+          upsertRepository([repository]);
+        }
+      }}
+    />
+  );
 };
 
 export default NewRepositoriesContainer;
