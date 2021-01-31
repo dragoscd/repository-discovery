@@ -15,6 +15,7 @@ const NewRepositoriesContainer: React.FC = () => {
   } = useMyRepositories();
 
   const lastWeekDate = format(subDays(new Date(), 7), 'yyyy-MM-dd');
+
   const { data, loading, error } = useFetch<{ items: IRepository[] }>(
     `/search/repositories?q=created:>${lastWeekDate}&sort=stars&order=desc`,
     []
