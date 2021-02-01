@@ -24,8 +24,8 @@ server
 
     const fetchOptions = {
       headers: {
-        ...(process.env.GITHUB_TOKEN
-          ? { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+        ...(process.env.RAZZLE_GITHUB_TOKEN
+          ? { Authorization: `token ${process.env.RAZZLE_GITHUB_TOKEN}` }
           : {}),
       },
     };
@@ -33,7 +33,7 @@ server
     try {
       markup = renderToString(
         sheet.collectStyles(
-          <Provider url={process.env.API_URL} options={fetchOptions}>
+          <Provider url={process.env.RAZZLE_API_URL} options={fetchOptions}>
             <StaticRouter context={context} location={req.url}>
               <App />
             </StaticRouter>
@@ -75,8 +75,8 @@ server
         <div id="root">${markup}</div>
 
         <script type="text/javascript" id="env">
-          window.__API_URL__ = "${process.env.API_URL}";
-          window.__GITHUB_TOKEN__ = "${process.env.GITHUB_TOKEN}";
+          window.__API_URL__ = "${process.env.RAZZLE_API_URL}";
+          window.__GITHUB_TOKEN__ = "${process.env.RAZZLE_GITHUB_TOKEN}";
         </script>
     </body>
 </html>`

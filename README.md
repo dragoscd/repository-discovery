@@ -1,7 +1,7 @@
 ## Env variables
 
- - API_URL - api host
- - GITHUB_TOKEN - can be generated here `https://github.com/settings/tokens` with `public_repo` scope
+ - RAZZLE_API_URL - api host
+ - RAZZLE_GITHUB_TOKEN - can be generated here `https://github.com/settings/tokens` with `public_repo` scope
 
 ## Quick Start
 
