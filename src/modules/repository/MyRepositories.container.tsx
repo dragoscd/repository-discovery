@@ -68,6 +68,7 @@ const MyRepositoriesContainer: React.FC = () => {
     }
   };
 
+  // TODO extract this in a separate hook
   useEffect(() => {
     const repositoriesToUpdate = Object.keys(starredRepositories)
       .filter(

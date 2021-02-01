@@ -5,6 +5,8 @@ import { IRepository } from '../types/common';
 import GithubIcon from './icons/Github';
 import StarIcon from './icons/Star';
 
+export const block = 'card';
+
 export enum SYNC_STATUS {
   SYNC = 'SYNC',
   UPDATED = 'UPDATED',
@@ -150,7 +152,7 @@ const Card: React.FC<CardProps> = ({
   } = data || {};
 
   return (
-    <CardWrapper className={className}>
+    <CardWrapper className={className} data-qa={block}>
       <InfoColumn>
         <CardHeader title={name}>{name}</CardHeader>
         <GithubLink href={html_url} target="_blank" title={name}>
@@ -163,12 +165,19 @@ const Card: React.FC<CardProps> = ({
         <ButtonStars
           onClick={() => onStared && onStared(data)}
           starred={isStarred}
+          data-qa={`${block}__star-button`}
         >
           <StyledStarIcon fillColor={isStarred ? '#d2aa09' : '#666'} />
           {stargazers_count}
         </ButtonStars>
-        <DateWrapper>{format(new Date(created_at), 'dd.MM')}</DateWrapper>
-        {status && <CardStatus status={status}>{status}</CardStatus>}
+        <DateWrapper data-qa={`${block}__date`}>
+          {format(new Date(created_at), 'dd.MM')}
+        </DateWrapper>
+        {status && (
+          <CardStatus status={status} data-qa={`${block}__status`}>
+            {status}
+          </CardStatus>
+        )}
       </ActionsColumn>
     </CardWrapper>
   );

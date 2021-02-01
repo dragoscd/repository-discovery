@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { IRepository } from '../types/common';
 import Card, { CardProps, SYNC_STATUS } from './Card';
 
+export const block = 'card-list';
+
 const StyledCard = styled(Card)`
   margin-bottom: 24px;
   min-width: 350px;
@@ -32,23 +34,31 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
   updateStatus,
 }) => {
   if (!data && loading) {
-    return <NotificationMessage>Loading ...</NotificationMessage>;
+    return (
+      <NotificationMessage data-qa={`${block}__message--loading`}>
+        Loading ...
+      </NotificationMessage>
+    );
   }
 
   if (error) {
     return (
-      <NotificationMessage>
+      <NotificationMessage data-qa={`${block}__message--error`}>
         Auch! Something went wrong please try again later.
       </NotificationMessage>
     );
   }
 
   if (data && data.length === 0) {
-    return <NotificationMessage>No data available</NotificationMessage>;
+    return (
+      <NotificationMessage data-qa={`${block}__message--empty`}>
+        No data available
+      </NotificationMessage>
+    );
   }
 
   return (
-    <div>
+    <div data-qa={block}>
       {(data || []).map(repository => {
         const cardStarred = isCardStarred && isCardStarred(repository.id);
         const cardStatus = updateStatus && updateStatus(repository.id);
