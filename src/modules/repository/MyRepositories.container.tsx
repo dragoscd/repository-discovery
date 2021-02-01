@@ -1,13 +1,13 @@
 import differenceInMinutes from 'date-fns/fp/differenceInMinutes';
 import React, { useEffect, useState } from 'react';
-import useFetch from 'use-http';
+import useFetch, { CachePolicies } from 'use-http';
 import { SYNC_STATUS } from '../../components/Card';
 import CardList from '../../components/CardList';
 import { IRepository } from '../../types/common';
 import { useMyRepositories } from './MyRepositories.context';
 
 const BATCH_SIZE = 2;
-const OUTDATE_TOLLERANCE_MINUTES = 2;
+const OUTDATE_TOLLERANCE_MINUTES = 1;
 
 const MyRepositoriesContainer: React.FC = () => {
   const {
@@ -15,7 +15,18 @@ const MyRepositoriesContainer: React.FC = () => {
     updateRepository,
     removeRepository,
   } = useMyRepositories();
-  const { get } = useFetch();
+
+  const { get } = useFetch({
+    cachePolicy: CachePolicies.NETWORK_ONLY,
+    interceptors: {
+      response: async ({ response }) => {
+        if (!response.ok) {
+          throw response;
+        }
+        return response;
+      },
+    },
+  });
   const [status, setStatus] = useState<{ [key: string]: SYNC_STATUS }>({});
 
   const repositories = Object.keys(starredRepositories).map(
@@ -25,17 +36,33 @@ const MyRepositoriesContainer: React.FC = () => {
   const fetchRepository = async (repository: IRepository) => {
     const url = new URL(repository.url);
 
-    setStatus({ [repository.id]: SYNC_STATUS.SYNC });
+    setStatus(status => {
+      const newStatus = { ...status };
+      newStatus[repository.id] = SYNC_STATUS.SYNC;
+
+      return newStatus;
+    });
 
     try {
       const repositoryData = await get(url.pathname);
+
       updateRepository([repositoryData]);
 
-      setStatus({ [repository.id]: SYNC_STATUS.UPDATED });
+      setStatus(status => {
+        const newStatus = { ...status };
+        newStatus[repository.id] = SYNC_STATUS.UPDATED;
+
+        return newStatus;
+      });
 
       return repositoryData;
     } catch {
-      setStatus({ [repository.id]: SYNC_STATUS.ERROR });
+      setStatus(status => {
+        const newStatus = { ...status };
+        newStatus[repository.id] = SYNC_STATUS.ERROR;
+
+        return newStatus;
+      });
 
       return repository;
     }
@@ -83,7 +110,7 @@ const MyRepositoriesContainer: React.FC = () => {
     <CardList
       data={repositories}
       isCardStarred={() => true}
-      updateStatus={repositoryID => status[repositoryID] || SYNC_STATUS.UPDATED}
+      updateStatus={repositoryID => status[repositoryID]}
       onStared={repository => removeRepository([repository.id])}
     />
   );
