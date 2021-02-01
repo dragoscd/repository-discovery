@@ -1,7 +1,7 @@
 import React from 'react';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
-import { hydrate } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { Provider } from 'use-http';
 
 declare global {
@@ -20,7 +20,9 @@ const fetchOptions = {
   },
 };
 
-hydrate(
+const renderMethod = module.hot ? ReactDOM.render : ReactDOM.hydrate;
+
+renderMethod(
   <Provider url={API_URL} options={fetchOptions}>
     <BrowserRouter>
       <App />

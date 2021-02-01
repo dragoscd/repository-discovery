@@ -7,7 +7,7 @@ import { IRepository } from '../../types/common';
 import { useMyRepositories } from './MyRepositories.context';
 
 const BATCH_SIZE = 2;
-const OUTDATE_TOLLERANCE_MINUTES = 1;
+const OUTDATE_TOLLERANCE_MINUTES = 2;
 
 const MyRepositoriesContainer: React.FC = () => {
   const {
