@@ -16,7 +16,7 @@ const GITHUB_TOKEN = window.__GITHUB_TOKEN__;
 
 const fetchOptions = {
   headers: {
-    Authorization: `token ${GITHUB_TOKEN}`,
+    ...(GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {}),
   },
 };
 

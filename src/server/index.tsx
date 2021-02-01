@@ -24,7 +24,9 @@ server
 
     const fetchOptions = {
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        ...(process.env.GITHUB_TOKEN
+          ? { Authorization: `token ${process.env.GITHUB_TOKEN}` }
+          : {}),
       },
     };
 
