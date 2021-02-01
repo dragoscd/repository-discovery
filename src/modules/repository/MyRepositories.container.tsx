@@ -1,12 +1,13 @@
 import differenceInMinutes from 'date-fns/fp/differenceInMinutes';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useFetch from 'use-http';
+import { SYNC_STATUS } from '../../components/Card';
 import CardList from '../../components/CardList';
 import { IRepository } from '../../types/common';
 import { useMyRepositories } from './MyRepositories.context';
 
 const BATCH_SIZE = 2;
-const OUTDATE_TOLLERANCE_MINUTES = 5;
+const OUTDATE_TOLLERANCE_MINUTES = 1;
 
 const MyRepositoriesContainer: React.FC = () => {
   const {
@@ -15,6 +16,7 @@ const MyRepositoriesContainer: React.FC = () => {
     removeRepository,
   } = useMyRepositories();
   const { get } = useFetch();
+  const [status, setStatus] = useState<{ [key: string]: SYNC_STATUS }>({});
 
   const repositories = Object.keys(starredRepositories).map(
     key => starredRepositories[key].repository
@@ -23,11 +25,20 @@ const MyRepositoriesContainer: React.FC = () => {
   const fetchRepository = async (repository: IRepository) => {
     const url = new URL(repository.url);
 
-    const repositoryData = await get(url.pathname);
+    setStatus({ [repository.id]: SYNC_STATUS.SYNC });
 
-    updateRepository([repositoryData]);
+    try {
+      const repositoryData = await get(url.pathname);
+      updateRepository([repositoryData]);
 
-    return repositoryData;
+      setStatus({ [repository.id]: SYNC_STATUS.UPDATED });
+
+      return repositoryData;
+    } catch {
+      setStatus({ [repository.id]: SYNC_STATUS.ERROR });
+
+      return repository;
+    }
   };
 
   useEffect(() => {
@@ -40,8 +51,6 @@ const MyRepositoriesContainer: React.FC = () => {
           ) >= OUTDATE_TOLLERANCE_MINUTES
       )
       .map(key => starredRepositories[key].repository);
-
-    console.log(repositoriesToUpdate);
 
     const batchedRepositories = repositoriesToUpdate
       .map((_, i) =>
@@ -74,6 +83,7 @@ const MyRepositoriesContainer: React.FC = () => {
     <CardList
       data={repositories}
       isCardStarred={() => true}
+      updateStatus={repositoryID => status[repositoryID] || SYNC_STATUS.UPDATED}
       onStared={repository => removeRepository([repository.id])}
     />
   );

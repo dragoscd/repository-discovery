@@ -1,3 +1,8 @@
+## Env variables
+
+ - API_URL - api host
+ - GITHUB_TOKEN - can be generated here `https://github.com/settings/tokens` with `public_repo` scope
+
 ## Quick Start
 
 Below is a list of commands you will probably find useful.

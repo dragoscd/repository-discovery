@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { IRepository } from '../types/common';
-import Card, { CardProps } from './Card';
+import Card, { CardProps, SYNC_STATUS } from './Card';
 
 const StyledCard = styled(Card)`
   margin-bottom: 24px;
@@ -20,6 +20,7 @@ interface CardListProps {
   loading?: boolean;
   error?: boolean;
   isCardStarred?: (repositoryID: number) => boolean;
+  updateStatus?: (repositoryID: number) => SYNC_STATUS;
 }
 
 const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
@@ -28,6 +29,7 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
   error = false,
   onStared,
   isCardStarred,
+  updateStatus,
 }) => {
   if (!data && loading) {
     return <NotificationMessage>Loading ...</NotificationMessage>;
@@ -49,6 +51,7 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
     <div>
       {(data || []).map(repository => {
         const cardStarred = isCardStarred && isCardStarred(repository.id);
+        const cardStatus = updateStatus && updateStatus(repository.id);
 
         return (
           <StyledCard
@@ -56,6 +59,7 @@ const CardList: React.FC<CardListProps & Pick<CardProps, 'onStared'>> = ({
             data={repository}
             isStarred={cardStarred}
             onStared={() => onStared && onStared(repository)}
+            status={cardStatus}
           />
         );
       })}

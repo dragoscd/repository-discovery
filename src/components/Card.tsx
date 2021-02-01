@@ -5,6 +5,12 @@ import { IRepository } from '../types/common';
 import GithubIcon from './icons/Github';
 import StarIcon from './icons/Star';
 
+export enum SYNC_STATUS {
+  SYNC = 'SYNC',
+  UPDATED = 'UPDATED',
+  ERROR = 'ERROR',
+}
+
 const overflowEllipsis = css`
   display: inline-block;
   overflow: hidden;
@@ -102,11 +108,30 @@ const DateWrapper = styled.div`
   padding-top: 4px;
 `;
 
+const CardStatus = styled.div<{ status: SYNC_STATUS }>`
+  padding-top: 12px;
+  font-size: 10px;
+
+  color: ${({ status }) => {
+    switch (status) {
+      case SYNC_STATUS.UPDATED:
+        return '#4BB543';
+      case SYNC_STATUS.ERROR:
+        return '#FF9494';
+      case SYNC_STATUS.SYNC:
+        return '#0277BD';
+      default:
+        return '#323232';
+    }
+  }};
+`;
+
 export type CardProps = {
   data: IRepository;
   className?: string;
   onStared?: (data: IRepository) => void;
   isStarred?: boolean;
+  status?: SYNC_STATUS;
 };
 
 const Card: React.FC<CardProps> = ({
@@ -114,6 +139,7 @@ const Card: React.FC<CardProps> = ({
   className,
   isStarred = false,
   onStared,
+  status,
 }) => {
   const {
     name = '-',
@@ -142,6 +168,7 @@ const Card: React.FC<CardProps> = ({
           {stargazers_count}
         </ButtonStars>
         <DateWrapper>{format(new Date(created_at), 'dd.MM')}</DateWrapper>
+        {status && <CardStatus status={status}>{status}</CardStatus>}
       </ActionsColumn>
     </CardWrapper>
   );
